@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <PackageId>GenericRepository</PackageId>
+        <Title>Generic Repository</Title>
+        <Summary>A generic repository.</Summary>
+        <Description>A generic repository.</Description>
     </PropertyGroup>
 
     <ItemGroup>
