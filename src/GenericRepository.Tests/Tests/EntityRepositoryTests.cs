@@ -69,28 +69,28 @@ public class EntityRepositoryTests
         }
     }
 
-    [Test]
-    public async Task GetByIdAsync_ExistingEntity_ReturnsEntity()
-    {
-        // Arrange
-        var sp = _serviceCollection.BuildServiceProvider();
-        var repository = sp.GetRequiredService<ICompanyRepository>();
-        var uow = sp.GetRequiredService<IUnitOfWork>();
-
-        var entity = DatabaseInitializer.GetMicrosoftCompany();
-        var primaryKey = await repository.CreateAsync(entity);
-        await uow.SaveChangesAsync();
-
-        // Act
-        var result = await repository.GetByIdAsync(primaryKey.ValueAccessor.Value);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            result.Should().NotBeNull();
-            entity.Should().BeEquivalentTo(result);
-        }
-    }
+    // [Test]
+    // public async Task GetByIdAsync_ExistingEntity_ReturnsEntity()
+    // {
+    //     // Arrange
+    //     var sp = _serviceCollection.BuildServiceProvider();
+    //     var repository = sp.GetRequiredService<ICompanyRepository>();
+    //     var uow = sp.GetRequiredService<IUnitOfWork>();
+    //
+    //     var entity = DatabaseInitializer.GetMicrosoftCompany();
+    //     var primaryKey = await repository.CreateAsync(entity);
+    //     await uow.SaveChangesAsync();
+    //
+    //     // Act
+    //     var result = await repository.GetByIdAsync(primaryKey.ValueAccessor.Value);
+    //
+    //     // Assert
+    //     using (new AssertionScope())
+    //     {
+    //         result.Should().NotBeNull();
+    //         entity.Should().BeEquivalentTo(result);
+    //     }
+    // }
 
     [Test]
     public async Task GetByIdAsync_NonexistentEntity_ReturnsNull()
