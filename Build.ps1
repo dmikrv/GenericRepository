@@ -28,4 +28,4 @@ if(Test-Path $artifacts) { Remove-Item $artifacts -Force -Recurse }
 
 exec { & dotnet test -c Release --results-directory $artifacts -l trx }
 
-exec { & dotnet pack -c Release -o $artifacts }
+exec { & dotnet pack -c Release /p:PackageVersion=$Env:PACKAGE_VERSION -o $artifacts }

@@ -32,6 +32,8 @@ jobs:
         fetch-depth: 0 # Run the workflow for all pull requests
 
     - name: Build and Test
+      env:
+        PACKAGE_VERSION: 0.0.0
       run: ./Build.ps1
 
     - name: Artifacts
