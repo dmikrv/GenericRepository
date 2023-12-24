@@ -13,8 +13,8 @@ on:
 #   contents: read
 
 defaults:
-run:
-  shell: pwsh
+  run:
+    shell: pwsh
 
 # concurrency:
 #   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
