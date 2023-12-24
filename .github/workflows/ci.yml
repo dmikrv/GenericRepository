@@ -9,16 +9,16 @@ on:
     branches:
     - '*'             # Run the workflow for all pull requests
 
-# permissions:
-#   contents: read
+permissions:
+  contents: read
 
 defaults:
   run:
     shell: pwsh
 
-# concurrency:
-#   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-#   cancel-in-progress: true
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -40,4 +40,4 @@ jobs:
         name: artifacts
         if-no-files-found: error
         retention-days: 7
-        path: artifacts/*.nupkg
+        path: artifacts/**/*
