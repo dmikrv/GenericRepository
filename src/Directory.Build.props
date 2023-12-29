@@ -1,16 +1,16 @@
 <Project>
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         
         <Authors>Artem Balianytsia</Authors>
-        <RepositoryUrl>https://github.com/ClassTerr/GenericRepository</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
+        <Copyright>Copyright © Artem Balianytsia 2023</Copyright>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageIcon>icon.png</PackageIcon>
         <PackageTags>ef, efcore, repository</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -18,9 +18,12 @@
         <Deterministic>true</Deterministic>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+
+        <NoWarn>$(NoWarn);CS1591</NoWarn>
     </PropertyGroup>
+    
     <ItemGroup>
         <None Include="..\..\icon.png" Pack="true" PackagePath="" Visible="False" />
-        <None Include="..\..\README.md" Pack="true" PackagePath="" Visible="False" />
+        <None Include="..\..\README.md" Pack="true" PackagePath="" Visible="False"/>
     </ItemGroup>
 </Project>
