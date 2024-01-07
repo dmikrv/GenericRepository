@@ -1,17 +1,17 @@
-using GenericRepository.Common.Common;
-using GenericRepository.Common.Enums;
-using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using GenericRepository.Core.Common;
+using GenericRepository.Core.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace GenericRepository.Extensions;
 
 /// <summary>
-/// Extensions for simplify work with <see cref="IQueryable{T}" />.
+///     Extensions for simplify work with <see cref="IQueryable{T}" />.
 /// </summary>
 public static class QueryExtensions
 {
     /// <summary>
-    /// Includes all navigation properties to the query.
+    ///     Includes all navigation properties to the query.
     /// </summary>
     /// <param name="query">The source query.</param>
     /// <param name="propertiesToInclude">A list of property selectors to include.</param>
@@ -32,7 +32,7 @@ public static class QueryExtensions
     }
 
     /// <summary>
-    /// Includes all navigation properties to the query.
+    ///     Includes all navigation properties to the query.
     /// </summary>
     /// <param name="query">The source query.</param>
     /// <param name="propertiesToInclude">A list of property selectors to include.</param>
@@ -48,7 +48,7 @@ public static class QueryExtensions
     }
 
     /// <summary>
-    /// Applies filtering by id of provided query.
+    ///     Applies filtering by id of provided query.
     /// </summary>
     /// <param name="query">The source query.</param>
     /// <param name="ids">An id of the desired entity.</param>
@@ -60,7 +60,7 @@ public static class QueryExtensions
         where TEntity : IEntity<TPrimaryKey>
         where TPrimaryKey : IEquatable<TPrimaryKey>
     {
-        if (!ids.Any()) throw new ArgumentException("Provide at least one id.");
+        if (ids.Length == 0) throw new ArgumentException("Provide at least one id.");
 
         switch (ids)
         {
@@ -78,7 +78,7 @@ public static class QueryExtensions
     }
 
     /// <summary>
-    /// Performs query ordering using provided <see cref="SortingDirectionEnum" />.
+    ///     Performs query ordering using provided <see cref="SortingDirection" />.
     /// </summary>
     /// <param name="source">The source query.</param>
     /// <param name="keySelector">An order expression selector.</param>
@@ -90,7 +90,7 @@ public static class QueryExtensions
     public static IQueryable<TSource> OptionalOrderBy<TSource, TKey>(
         this IQueryable<TSource>? source,
         Expression<Func<TSource, TKey>>? keySelector,
-        SortingDirectionEnum sortingDirection)
+        SortingDirection sortingDirection)
     {
         if (source is null) throw new ArgumentNullException(nameof(source));
 
@@ -98,9 +98,9 @@ public static class QueryExtensions
 
         return sortingDirection switch
         {
-            SortingDirectionEnum.NotSet => source,
-            SortingDirectionEnum.Asc => source.OrderBy(keySelector),
-            SortingDirectionEnum.Desc => source.OrderByDescending(keySelector),
+            SortingDirection.NotSet => source,
+            SortingDirection.Asc => source.OrderBy(keySelector),
+            SortingDirection.Desc => source.OrderByDescending(keySelector),
             _ => throw new ArgumentOutOfRangeException(nameof(sortingDirection), sortingDirection, null)
         };
     }

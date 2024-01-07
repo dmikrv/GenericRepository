@@ -1,18 +1,17 @@
 using AutoMapper;
-using GenericRepository.Common.Common;
-using GenericRepository.Common.Contracts.QueryParams;
-using GenericRepository.Common.Extensions;
+using GenericRepository.Core.Common;
+using GenericRepository.Core.Contracts.QueryParams;
 using Microsoft.EntityFrameworkCore;
 
 namespace GenericRepository.Extensions;
 
 /// <summary>
-/// A set of extension methods to work with pagination of <see cref="IQueryable" />.
+///     A set of extension methods to work with pagination of <see cref="IQueryable" />.
 /// </summary>
 public static class QueryablePaginationExtensions
 {
     /// <summary>
-    /// Performs pagination of <paramref name="source"></paramref>.
+    ///     Performs pagination of <paramref name="source"></paramref>.
     /// </summary>
     /// <param name="source">Data to paginate.</param>
     /// <param name="pageNumber">Desired page number.</param>
@@ -48,7 +47,7 @@ public static class QueryablePaginationExtensions
     }
 
     /// <summary>
-    /// Performs pagination of <paramref name="source"></paramref>.
+    ///     Performs pagination of <paramref name="source"></paramref>.
     /// </summary>
     /// <param name="source">Data to paginate.</param>
     /// <param name="parameters">Desired pagination parameters.</param>
@@ -66,7 +65,7 @@ public static class QueryablePaginationExtensions
     }
 
     /// <summary>
-    /// Performs pagination of <paramref name="source"></paramref> and maps data to <typeparamref name="TResult" /> type.
+    ///     Performs pagination of <paramref name="source"></paramref> and maps data to <typeparamref name="TResult" /> type.
     /// </summary>
     /// <param name="source">Data to paginate.</param>
     /// <param name="pageNumber">Desired page number.</param>
@@ -85,11 +84,11 @@ public static class QueryablePaginationExtensions
     {
         var originalResult = await source.PaginateAsync(pageNumber, pageSize, token).ConfigureAwait(false);
         var mappedResults = mapper.MapSelfIgnored<List<TResult>>(originalResult.Results);
-        return new(originalResult.PageNumber, originalResult.PageSize, mappedResults, originalResult.ItemsCount);
+        return new PagedResult<TResult>(originalResult.PageNumber, originalResult.PageSize, mappedResults, originalResult.ItemsCount);
     }
 
     /// <summary>
-    /// Performs pagination of <paramref name="source"></paramref> and maps data to <typeparamref name="TResult" /> type.
+    ///     Performs pagination of <paramref name="source"></paramref> and maps data to <typeparamref name="TResult" /> type.
     /// </summary>
     /// <param name="source">Data to paginate.</param>
     /// <param name="parameters">Desired pagination parameters.</param>

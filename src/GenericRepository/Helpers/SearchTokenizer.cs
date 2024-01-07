@@ -4,7 +4,7 @@ public static class SearchInputTokenizer
 {
     public static List<string> TokenizeSearch(string query, string delimiter = " ")
     {
-        if (string.IsNullOrWhiteSpace(query)) return new();
+        if (string.IsNullOrWhiteSpace(query)) return new List<string>();
 
         var searchTokens = query
             .Split(delimiter, StringSplitOptions.RemoveEmptyEntries)

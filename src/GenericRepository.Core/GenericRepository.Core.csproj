@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>Kravchuk.GenericRepository.Core</PackageId>
+        <Title>Generic Repository</Title>
+        <Summary>A generic repository.</Summary>
+        <Description>A generic repository.</Description>
+    </PropertyGroup>
+
+</Project>

@@ -1,12 +1,12 @@
 namespace GenericRepository.Extensions;
 
 /// <summary>
-/// Extensions for simplify work with <see cref="Type" />.
+///     Extensions for simplify work with <see cref="Type" />.
 /// </summary>
 public static class TypeExtensions
 {
     /// <summary>
-    /// The same method as <see cref="Type.IsAssignableFrom" />, but works also for generic types.
+    ///     The same method as <see cref="Type.IsAssignableFrom" />, but works also for generic types.
     /// </summary>
     /// <param name="genericType">The type to compare with <paramref name="givenType" />.</param>
     /// <param name="givenType">The type to check.</param>

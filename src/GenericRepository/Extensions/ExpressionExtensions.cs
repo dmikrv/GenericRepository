@@ -38,6 +38,15 @@ public static class ExpressionExtensions
             parameter);
     }
 
+    public static Expression<Func<T, TResult>> ChainOrElse<T, TInput, TResult>(this Func<TInput, Expression<Func<T, TResult>>>
+            expression,
+        ICollection<TInput> data)
+    {
+        var expr = expression.Invoke(data.First());
+        expr = data.Skip(1).Aggregate(expr, (accum, id) => accum.OrElse(expression.Invoke(id)));
+        return expr;
+    }
+
 
     private class ReplaceExpressionVisitor
         : ExpressionVisitor

@@ -1,19 +1,30 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using System.Collections.Concurrent;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace GenericRepository.Extensions;
 
 /// <summary>
-/// Extensions for simplify work with <see cref="string" />.
+///     Extensions for simplify work with <see cref="string" />.
 /// </summary>
 public static class EfExtensions
 {
     private static readonly ConcurrentDictionary<Type, IReadOnlyList<IProperty>> PrimaryKeysDict = new();
 
+    public static object[] GetCollectionOfEntities(this NavigationEntry navigationEntry)
+    {
+        if (navigationEntry.Metadata.IsCollection)
+            return navigationEntry.CurrentValue is null
+                ? Array.Empty<object>()
+                : ((IEnumerable<object>)navigationEntry.CurrentValue).ToArray();
+
+        return navigationEntry.CurrentValue is null ? Array.Empty<object>() : new[] { navigationEntry.CurrentValue };
+    }
+
     /// <summary>
-    /// Gets a list of properties that are primary key of entity with type <paramref name="entityType" />.
-    /// Supports composite primary keys.
+    ///     Gets a list of properties that are primary key of entity with type <paramref name="entityType" />.
+    ///     Supports composite primary keys.
     /// </summary>
     /// <param name="context">The db context.</param>
     /// <param name="entityType">The entity type to get key properties from.</param>
@@ -28,15 +39,15 @@ public static class EfExtensions
             x =>
             {
                 var typeMetadata = context.Model.FindEntityType(x) ??
-                                   throw new($"There is no DbSet<{entityType.FullName}> in the {context.GetType().Name}");
+                                   throw new Exception($"There is no DbSet<{entityType.FullName}> in the {context.GetType().Name}");
 
                 return typeMetadata.FindPrimaryKey()?.Properties!;
             });
     }
 
     /// <summary>
-    /// Gets a list of properties that are primary key of entity with type <typeparamref name="T" />.
-    /// Supports composite primary keys.
+    ///     Gets a list of properties that are primary key of entity with type <typeparamref name="T" />.
+    ///     Supports composite primary keys.
     /// </summary>
     /// <param name="context">The db context.</param>
     /// <typeparam name="T">The entity type to get key properties from.</typeparam>
@@ -47,7 +58,7 @@ public static class EfExtensions
     }
 
     /// <summary>
-    /// Gets an enumeration of tuples of primary key property name and value of given entity.
+    ///     Gets an enumeration of tuples of primary key property name and value of given entity.
     /// </summary>
     /// <param name="context">The db context.</param>
     /// <param name="entity">An entity to get PK value from.</param>
@@ -58,7 +69,7 @@ public static class EfExtensions
     {
         var pk = context?.GetPrimaryKeyProperties<T>();
 
-        if (pk?.Any() != true) throw new("Can't handle keyless entities.");
+        if (pk?.Any() != true) throw new Exception("Can't handle keyless entities.");
 
         var keyNames = pk.Select(x => x.Name);
         var keyValues = pk.Select(x => x.PropertyInfo!.GetValue(entity));
@@ -67,7 +78,7 @@ public static class EfExtensions
     }
 
     /// <summary>
-    /// Returns a query filtered by id of given entity.
+    ///     Returns a query filtered by id of given entity.
     /// </summary>
     /// <param name="context">The db context.</param>
     /// <param name="entity">An entity to get PK value from.</param>
@@ -81,7 +92,7 @@ public static class EfExtensions
     }
 
     /// <summary>
-    /// Returns a query filtered by given id.
+    ///     Returns a query filtered by given id.
     /// </summary>
     /// <param name="context">The db context.</param>
     /// <param name="id">An enumerator of properties representing a primary key.</param>

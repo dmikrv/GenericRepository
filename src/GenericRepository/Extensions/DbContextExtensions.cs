@@ -1,6 +1,7 @@
-﻿using GenericRepository.Common.Common;
-using GenericRepository.Common.Common.AutoAuditing;
-using GenericRepository.Common.Constants;
+﻿using GenericRepository.Core.Common;
+using GenericRepository.Core.Common.Auditable.Create;
+using GenericRepository.Core.Common.Auditable.SoftDelete;
+using GenericRepository.Core.Common.Auditable.Update;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -9,15 +10,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GenericRepository.Extensions;
 
 /// <summary>
-/// Uses to handle timezones for <see cref="DateTime" /> for Entity Framework.
+///     Uses to handle timezones for <see cref="DateTime" /> for Entity Framework.
 /// </summary>
 public static class DbContextExtensions
 {
-    private const string DefaultDateSql = "GetUtcDate()";
     private const string IsUtcAnnotation = "HasKind";
+    private const int StringIdPropertyLengthConstants = 64;
 
     /// <summary>
-    /// Sets the <see cref="DateTimeKind" /> for this property.
+    ///     Sets the <see cref="DateTimeKind" /> for this property.
     /// </summary>
     /// <param name="builder">The property builder.</param>
     /// <param name="kind">The kind of this <see cref="DateTime" />.</param>
@@ -30,8 +31,8 @@ public static class DbContextExtensions
     }
 
     /// <summary>
-    /// Specifies a default <see cref="DateTimeKind" /> for all <see cref="DateTime" /> properties.
-    /// Make sure this is called after configuring all your entities.
+    ///     Specifies a default <see cref="DateTimeKind" /> for all <see cref="DateTime" /> properties.
+    ///     Make sure this is called after configuring all your entities.
     /// </summary>
     /// <param name="builder">The model builder.</param>
     /// <param name="dateTimeKind">The default kind for all <see cref="DateTime" /> in the database.</param>
@@ -47,7 +48,7 @@ public static class DbContextExtensions
     }
 
     /// <summary>
-    /// Ignores all composite primary keys implementations from model builder. This prevents these models from being treated as entities.
+    ///     Ignores all composite primary keys implementations from model builder. This prevents these models from being treated as entities.
     /// </summary>
     /// <param name="modelBuilder">The model builder.</param>
     public static void IgnoreCompositePrimaryKeys(this ModelBuilder modelBuilder)
@@ -64,29 +65,58 @@ public static class DbContextExtensions
     }
 
     /// <summary>
-    /// Applies default value to current date and time of the database server to all entities that implement
-    /// <see cref="IAutoAuditCreatedAt" /> or <see cref="IAutoAuditModifiedAt" />.
+    ///     Applies default value to current date and time of the database server to all entities that implement
+    ///     <see cref="IAuditableCreatedAt" /> or <see cref="IAuditableModifiedAt" />.
     /// </summary>
     /// <param name="modelBuilder">The model builder.</param>
-    public static void DefaultValueForAutoAuditDates(this ModelBuilder modelBuilder)
+    /// <param name="defaultDateSql"></param>
+    public static void DefaultValueForAutoAuditDates(this ModelBuilder modelBuilder, string defaultDateSql)
+    {
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            if (typeof(IAuditableCreatedAt).IsAssignableFrom(entityType.ClrType))
+            {
+                var property = entityType.FindProperty(nameof(IAuditableCreatedAt.CreatedAtUtc));
+                property?.SetDefaultValueSql(defaultDateSql);
+            }
+    }
+
+    public static void NullableValueForAutoAuditUserIds(this ModelBuilder modelBuilder)
     {
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            if (typeof(IAutoAuditCreatedAt).IsAssignableFrom(entityType.ClrType))
+            if (typeof(IAuditableModifiedBy<>).IsAssignableFromGenericType(entityType.ClrType))
             {
-                var property = entityType.FindProperty(nameof(IAutoAuditCreatedAt.CreatedAt));
-                property?.SetDefaultValueSql(DefaultDateSql);
+                var property = entityType.FindProperty(nameof(IAuditableModifiedBy<object>.ModifiedByUserId));
+                if (property != null) property.IsNullable = true;
             }
 
-            if (typeof(IAutoAuditCreatedBy).IsAssignableFrom(entityType.ClrType))
-                entityType.SetPropertyMaxLengthIfNotSet(nameof(IAutoAuditCreatedBy.CreatedBy), StringPropertyLengthConstants.Id);
-
-            if (typeof(IAutoAuditModifiedBy).IsAssignableFrom(entityType.ClrType))
-                entityType.SetPropertyMaxLengthIfNotSet(nameof(IAutoAuditModifiedBy.LastModifiedBy), StringPropertyLengthConstants.Id);
+            if (typeof(IAuditableDeletedBy<>).IsAssignableFromGenericType(entityType.ClrType))
+            {
+                var property = entityType.FindProperty(nameof(IAuditableDeletedBy<object>.DeletedByUserId));
+                if (property != null) property.IsNullable = true;
+            }
         }
     }
 
-    private static void SetPropertyMaxLengthIfNotSet(this IMutableEntityType entityType, string propertyName, int maxLength)
+    public static void DefaultValueForAutoAuditUserIds(this ModelBuilder modelBuilder)
+    {
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            if (typeof(IAuditableCreatedBy<>).IsAssignableFromGenericType(entityType.ClrType))
+                entityType.SetPropertyMaxLengthIfNotSet(nameof(IAuditableCreatedBy<object>.CreatedByUserId),
+                    StringIdPropertyLengthConstants);
+
+            if (typeof(IAuditableModifiedBy<>).IsAssignableFromGenericType(entityType.ClrType))
+                entityType.SetPropertyMaxLengthIfNotSet(nameof(IAuditableModifiedBy<object>.ModifiedByUserId),
+                    StringIdPropertyLengthConstants);
+
+            if (typeof(IAuditableDeletedBy<>).IsAssignableFromGenericType(entityType.ClrType))
+                entityType.SetPropertyMaxLengthIfNotSet(nameof(IAuditableDeletedBy<object>.DeletedByUserId),
+                    StringIdPropertyLengthConstants);
+        }
+    }
+
+    private static void SetPropertyMaxLengthIfNotSet(this IMutableTypeBase entityType, string propertyName, int maxLength)
     {
         var createdByUserId = entityType.FindProperty(propertyName);
         if (createdByUserId?.GetMaxLength() == null) createdByUserId?.SetMaxLength(maxLength);

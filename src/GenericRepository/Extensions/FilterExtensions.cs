@@ -1,5 +1,5 @@
-﻿using GenericRepository.Common.Models.Filters;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using GenericRepository.Core.Models.Filters;
 
 namespace GenericRepository.Extensions;
 
