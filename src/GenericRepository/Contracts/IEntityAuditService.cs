@@ -16,4 +16,16 @@ public interface IEntityAuditService
     /// <param name="userId">A user who performs this operation.</param>
     /// <param name="token"></param>
     Task ApplyAuditRules<TUserPrimaryKey>(DbContext context, TUserPrimaryKey userId, CancellationToken token = default);
+
+    Task ApplyAuditRulesByRef<TUserPrimaryKey>(DbContext context, TUserPrimaryKey userId, CancellationToken token = default)
+        where TUserPrimaryKey : class
+    {
+        return Task.CompletedTask;
+    }
+
+    Task ApplyAuditRulesByVal<TUserPrimaryKey>(DbContext context, TUserPrimaryKey userId, CancellationToken token = default)
+        where TUserPrimaryKey : struct
+    {
+        return Task.CompletedTask;
+    }
 }

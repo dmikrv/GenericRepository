@@ -35,12 +35,36 @@ public static class ServiceProviderUnitOfWorkExtensions
     public static IServiceCollection AddGenericRepositoryUnitOfWork<TDbContext, TUserPrimaryKey>(this IServiceCollection services,
         bool addEntityAuditService = true,
         ServiceLifetime lifetime = ServiceLifetime.Scoped)
-        where TDbContext : DbContext
+        where TDbContext : DbContext where TUserPrimaryKey : struct
     {
         if (addEntityAuditService) AddEntityAuditService(services, lifetime);
 
         services.Add(new ServiceDescriptor(typeof(IUnitOfWork),
             typeof(GenericRepositoryUnitOfWork<TDbContext, TUserPrimaryKey>), lifetime));
+        return services;
+    }
+
+    public static IServiceCollection AddGenericRepositoryUnitOfWorkVal<TDbContext, TUserPrimaryKey>(this IServiceCollection services,
+        bool addEntityAuditService = true,
+        ServiceLifetime lifetime = ServiceLifetime.Scoped)
+        where TDbContext : DbContext where TUserPrimaryKey : struct
+    {
+        if (addEntityAuditService) AddEntityAuditService(services, lifetime);
+
+        services.Add(new ServiceDescriptor(typeof(IUnitOfWork),
+            typeof(GenericRepositoryUnitOfWorkVal<TDbContext, TUserPrimaryKey>), lifetime));
+        return services;
+    }
+
+    public static IServiceCollection AddGenericRepositoryUnitOfWorkRef<TDbContext, TUserPrimaryKey>(this IServiceCollection services,
+        bool addEntityAuditService = true,
+        ServiceLifetime lifetime = ServiceLifetime.Scoped)
+        where TDbContext : DbContext where TUserPrimaryKey : class
+    {
+        if (addEntityAuditService) AddEntityAuditService(services, lifetime);
+
+        services.Add(new ServiceDescriptor(typeof(IUnitOfWork),
+            typeof(GenericRepositoryUnitOfWorkRef<TDbContext, TUserPrimaryKey>), lifetime));
         return services;
     }
 

@@ -7,9 +7,9 @@ namespace GenericRepository.Services;
 /// <inheritdoc />
 public class GenericRepositoryUnitOfWork<TContext, TUserPrimaryKey> : IUnitOfWork where TContext : DbContext
 {
-    private readonly TContext _context;
-    private readonly ICurrentUserIdProvider _currentUserIdProvider;
-    private readonly IEnumerable<IEntityAuditService> _entityAuditServices;
+    protected readonly TContext Context;
+    protected readonly ICurrentUserIdProvider CurrentUserIdProvider;
+    protected readonly IReadOnlyCollection<IEntityAuditService> EntityAuditServices;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="GenericRepositoryUnitOfWork{TContext,TUserPrimaryKey}" /> class.
@@ -20,18 +20,17 @@ public class GenericRepositoryUnitOfWork<TContext, TUserPrimaryKey> : IUnitOfWor
     public GenericRepositoryUnitOfWork(TContext context, ICurrentUserIdProvider currentUserIdProvider,
         IEnumerable<IEntityAuditService> entityAuditServices)
     {
-        _context = context;
-        _currentUserIdProvider = currentUserIdProvider;
-        _entityAuditServices = entityAuditServices;
+        Context = context;
+        CurrentUserIdProvider = currentUserIdProvider;
+        EntityAuditServices = entityAuditServices.ToArray();
     }
 
     /// <inheritdoc />
     public virtual async Task SaveChangesAsync(CancellationToken token = default)
     {
-        var userId = await _currentUserIdProvider.GetCurrentUserIdAsync<TUserPrimaryKey>(token);
-        foreach (var entityAuditService in _entityAuditServices)
-            await entityAuditService.ApplyAuditRules(_context, userId, token);
-        await _context.SaveChangesAsync(token);
+        var userId = await CurrentUserIdProvider.GetCurrentUserIdAsync<TUserPrimaryKey>(token);
+        foreach (var entityAuditService in EntityAuditServices) await entityAuditService.ApplyAuditRules(Context, userId, token);
+        await Context.SaveChangesAsync(token);
         DetachAll();
     }
 
@@ -43,6 +42,6 @@ public class GenericRepositoryUnitOfWork<TContext, TUserPrimaryKey> : IUnitOfWor
 
     private void DetachAll()
     {
-        _context.ChangeTracker.Clear();
+        Context.ChangeTracker.Clear();
     }
 }

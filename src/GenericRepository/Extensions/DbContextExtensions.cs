@@ -84,9 +84,15 @@ public static class DbContextExtensions
     {
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            if (typeof(IAuditableModifiedBy<>).IsAssignableFromGenericType(entityType.ClrType))
+            if (typeof(IAuditableModifiedByVal<>).IsAssignableFromGenericType(entityType.ClrType))
             {
-                var property = entityType.FindProperty(nameof(IAuditableModifiedBy<object>.ModifiedByUserId));
+                var property = entityType.FindProperty(nameof(IAuditableModifiedByVal<int>.ModifiedByUserId));
+                if (property != null) property.IsNullable = true;
+            }
+
+            if (typeof(IAuditableModifiedByRef<>).IsAssignableFromGenericType(entityType.ClrType))
+            {
+                var property = entityType.FindProperty(nameof(IAuditableModifiedByRef<object>.ModifiedByUserId));
                 if (property != null) property.IsNullable = true;
             }
 
@@ -106,8 +112,12 @@ public static class DbContextExtensions
                 entityType.SetPropertyMaxLengthIfNotSet(nameof(IAuditableCreatedBy<object>.CreatedByUserId),
                     StringIdPropertyLengthConstants);
 
-            if (typeof(IAuditableModifiedBy<>).IsAssignableFromGenericType(entityType.ClrType))
-                entityType.SetPropertyMaxLengthIfNotSet(nameof(IAuditableModifiedBy<object>.ModifiedByUserId),
+            if (typeof(IAuditableModifiedByVal<>).IsAssignableFromGenericType(entityType.ClrType))
+                entityType.SetPropertyMaxLengthIfNotSet(nameof(IAuditableModifiedByVal<int>.ModifiedByUserId),
+                    StringIdPropertyLengthConstants);
+
+            if (typeof(IAuditableModifiedByRef<>).IsAssignableFromGenericType(entityType.ClrType))
+                entityType.SetPropertyMaxLengthIfNotSet(nameof(IAuditableModifiedByRef<object>.ModifiedByUserId),
                     StringIdPropertyLengthConstants);
 
             if (typeof(IAuditableDeletedBy<>).IsAssignableFromGenericType(entityType.ClrType))
