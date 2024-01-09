@@ -96,9 +96,15 @@ public static class DbContextExtensions
                 if (property != null) property.IsNullable = true;
             }
 
-            if (typeof(IAuditableDeletedBy<>).IsAssignableFromGenericType(entityType.ClrType))
+            if (typeof(IAuditableDeletedByVal<>).IsAssignableFromGenericType(entityType.ClrType))
             {
-                var property = entityType.FindProperty(nameof(IAuditableDeletedBy<object>.DeletedByUserId));
+                var property = entityType.FindProperty(nameof(IAuditableDeletedByVal<int>.DeletedByUserId));
+                if (property != null) property.IsNullable = true;
+            }
+
+            if (typeof(IAuditableDeletedByRef<>).IsAssignableFromGenericType(entityType.ClrType))
+            {
+                var property = entityType.FindProperty(nameof(IAuditableDeletedByRef<object>.DeletedByUserId));
                 if (property != null) property.IsNullable = true;
             }
         }
@@ -120,8 +126,12 @@ public static class DbContextExtensions
                 entityType.SetPropertyMaxLengthIfNotSet(nameof(IAuditableModifiedByRef<object>.ModifiedByUserId),
                     StringIdPropertyLengthConstants);
 
-            if (typeof(IAuditableDeletedBy<>).IsAssignableFromGenericType(entityType.ClrType))
-                entityType.SetPropertyMaxLengthIfNotSet(nameof(IAuditableDeletedBy<object>.DeletedByUserId),
+            if (typeof(IAuditableDeletedByVal<>).IsAssignableFromGenericType(entityType.ClrType))
+                entityType.SetPropertyMaxLengthIfNotSet(nameof(IAuditableDeletedByVal<int>.DeletedByUserId),
+                    StringIdPropertyLengthConstants);
+
+            if (typeof(IAuditableDeletedByRef<>).IsAssignableFromGenericType(entityType.ClrType))
+                entityType.SetPropertyMaxLengthIfNotSet(nameof(IAuditableDeletedByRef<object>.DeletedByUserId),
                     StringIdPropertyLengthConstants);
         }
     }

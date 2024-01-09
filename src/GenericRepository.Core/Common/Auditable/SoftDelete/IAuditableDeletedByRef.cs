@@ -1,6 +1,6 @@
 namespace GenericRepository.Core.Common.Auditable.SoftDelete;
 
-public interface IAuditableDeletedBy<TPrimaryKey>
+public interface IAuditableDeletedByRef<TPrimaryKey> where TPrimaryKey : class
 {
     /// <summary>
     ///     Gets or sets entity editor id.

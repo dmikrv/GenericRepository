@@ -5,8 +5,8 @@ using Microsoft.EntityFrameworkCore;
 namespace GenericRepository.Services;
 
 /// <inheritdoc />
-public class GenericRepositoryUnitOfWorkRef<TContext, TUserPrimaryKey> : GenericRepositoryUnitOfWork<TContext, TUserPrimaryKey>,
-    IUnitOfWork where TContext : DbContext where TUserPrimaryKey : class
+public class GenericRepositoryUnitOfWorkRef<TContext, TUserPrimaryKey> : GenericRepositoryUnitOfWork<TContext>
+    where TContext : DbContext where TUserPrimaryKey : class
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="GenericRepositoryUnitOfWorkRef{TContext,TUserPrimaryKey}" /> class.
@@ -23,12 +23,7 @@ public class GenericRepositoryUnitOfWorkRef<TContext, TUserPrimaryKey> : Generic
     public override async Task SaveChangesAsync(CancellationToken token = default)
     {
         var userId = await CurrentUserIdProvider.GetCurrentUserIdAsync<TUserPrimaryKey>(token);
-        foreach (var entityAuditService in EntityAuditServices)
-        {
-            await entityAuditService.ApplyAuditRules(Context, userId, token);
-            await entityAuditService.ApplyAuditRulesByRef(Context, userId, token);
-        }
-
+        foreach (var entityAuditService in EntityAuditServices) await entityAuditService.ApplyAuditRulesByRef(Context, userId, token);
         await Context.SaveChangesAsync(token);
         Rollback();
     }

@@ -3,7 +3,6 @@ using GenericRepository.Core.Contracts;
 using GenericRepository.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace GenericRepository.Extensions.ServiceProviders;
 
@@ -26,16 +25,16 @@ public static class ServiceProviderUnitOfWorkExtensions
         return services;
     }
 
-    public static IServiceCollection AddGenericRepositoryUnitOfWork<TDbContext, TUserPrimaryKey>(this IServiceCollection services,
+    public static IServiceCollection AddGenericRepositoryUnitOfWork<TDbContext>(this IServiceCollection services,
         ServiceLifetime lifetime = ServiceLifetime.Scoped)
-        where TDbContext : DbContext where TUserPrimaryKey : struct
+        where TDbContext : DbContext
     {
-        services.Add(new ServiceDescriptor(typeof(IUnitOfWork),
-            typeof(GenericRepositoryUnitOfWork<TDbContext, TUserPrimaryKey>), lifetime));
+        services.Add(new ServiceDescriptor(typeof(IUnitOfWork), typeof(GenericRepositoryUnitOfWork<TDbContext>), lifetime));
         return services;
     }
 
-    public static IServiceCollection AddGenericRepositoryUnitOfWorkVal<TDbContext, TUserPrimaryKey>(this IServiceCollection services,
+    public static IServiceCollection AddGenericRepositoryUnitOfWorkWithEntityAuditVal<TDbContext, TUserPrimaryKey>(
+        this IServiceCollection services,
         ServiceLifetime lifetime = ServiceLifetime.Scoped)
         where TDbContext : DbContext where TUserPrimaryKey : struct
     {
@@ -44,7 +43,8 @@ public static class ServiceProviderUnitOfWorkExtensions
         return services;
     }
 
-    public static IServiceCollection AddGenericRepositoryUnitOfWorkRef<TDbContext, TUserPrimaryKey>(this IServiceCollection services,
+    public static IServiceCollection AddGenericRepositoryUnitOfWorkWithEntityAuditRef<TDbContext, TUserPrimaryKey>(
+        this IServiceCollection services,
         ServiceLifetime lifetime = ServiceLifetime.Scoped)
         where TDbContext : DbContext where TUserPrimaryKey : class
     {
@@ -53,7 +53,7 @@ public static class ServiceProviderUnitOfWorkExtensions
         return services;
     }
 
-    public static IServiceCollection AddEntityAuditService(this IServiceCollection services,
+    public static IServiceCollection AddDefaultEntityAuditService(this IServiceCollection services,
         ServiceLifetime lifetime = ServiceLifetime.Scoped)
     {
         services.Add(new ServiceDescriptor(typeof(IEntityAuditService), typeof(EntityAuditService), lifetime));
