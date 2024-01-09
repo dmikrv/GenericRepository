@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericRepository", "src\Ge
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericRepository.Core", "src\GenericRepository.Core\GenericRepository.Core.csproj", "{509508B3-7BE1-482C-9551-097C1F661F4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericRepository.Tests", "GenericRepository.Tests\GenericRepository.Tests.csproj", "{E18BEBB2-82BA-44C9-8D43-458BB86D0F2E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericRepository.Tests", "src\GenericRepository.Tests\GenericRepository.Tests.csproj", "{E18BEBB2-82BA-44C9-8D43-458BB86D0F2E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{9DF7E743-6C8B-4E45-A9BC-16C35C5E1355}"
 	ProjectSection(SolutionItems) = preProject

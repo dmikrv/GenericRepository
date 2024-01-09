@@ -36,8 +36,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\src\GenericRepository.Core\GenericRepository.Core.csproj"/>
-        <ProjectReference Include="..\src\GenericRepository\GenericRepository.csproj"/>
+        <ProjectReference Include="..\GenericRepository.Core\GenericRepository.Core.csproj" />
+        <ProjectReference Include="..\GenericRepository\GenericRepository.csproj" />
     </ItemGroup>
 
 </Project>
