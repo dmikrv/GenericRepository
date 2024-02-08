@@ -257,7 +257,7 @@ public class UnitOfWorkEntityRepositoryBase<TEntity, TPrimaryKey, TContext, TAut
         query = await base.ApplyFilteringAsync(query, request, token);
 
         if (request?.Ids is not null && request.Ids.Length > 0)
-            query = await ApplyFilterByIdAsync(query, request.InvertIds, request.Ids);
+            query = await ApplyFilterByIdAsync(query, request.IsInvertIds, request.Ids);
 
         return query;
     }
@@ -266,16 +266,16 @@ public class UnitOfWorkEntityRepositoryBase<TEntity, TPrimaryKey, TContext, TAut
     ///     Applies filtering by id of provided query.
     /// </summary>
     /// <param name="query">The source query.</param>
-    /// <param name="invertIds"></param>
+    /// <param name="isInvertIds"></param>
     /// <param name="ids">An id of the desired entity.</param>
     /// <returns>A new query with applied filter by id.</returns>
     /// <exception cref="ArgumentNullException">Some of provided parameter was null or default.</exception>
-    protected virtual ValueTask<IQueryable<TEntity>> ApplyFilterByIdAsync(IQueryable<TEntity> query, bool? invertIds,
+    protected virtual ValueTask<IQueryable<TEntity>> ApplyFilterByIdAsync(IQueryable<TEntity> query, bool? isInvertIds,
         params TPrimaryKey[] ids)
     {
         ArgumentNullException.ThrowIfNull(query);
 
-        return new ValueTask<IQueryable<TEntity>>(query.FilterById(invertIds ?? false, ids));
+        return new ValueTask<IQueryable<TEntity>>(query.FilterById(isInvertIds ?? false, ids));
     }
 
     /// <summary>
@@ -299,7 +299,7 @@ public class UnitOfWorkEntityRepositoryBase<TEntity, TPrimaryKey, TContext, TAut
 
     protected override bool IsEmptyQuery(TQueryParams? request)
     {
-        if (request?.Ids is not null && request.Ids.Length == 0)
+        if (request?.IsInvertIds != true && request?.Ids is not null && request.Ids.Length == 0)
             return true;
 
         // TODO: check all collection filters

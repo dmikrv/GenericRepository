@@ -10,5 +10,5 @@ public interface IIdsFilterQueryParams<TPrimaryKey> where TPrimaryKey : IEquatab
     /// </summary>
     TPrimaryKey[]? Ids { get; set; }
 
-    bool? InvertIds { get; set; }
+    bool? IsInvertIds { get; set; }
 }

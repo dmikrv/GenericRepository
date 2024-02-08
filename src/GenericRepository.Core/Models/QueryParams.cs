@@ -35,7 +35,7 @@ public class QueryParams<TPrimaryKey> : IQueryParams<TPrimaryKey>
 
     public TPrimaryKey[]? Ids { get; set; }
 
-    public bool? InvertIds { get; set; }
+    public bool? IsInvertIds { get; set; }
 }
 
 public class QueryParams<TPrimaryKey, TFilter> : QueryParams<TPrimaryKey>, IQueryParams<TPrimaryKey, TFilter>
