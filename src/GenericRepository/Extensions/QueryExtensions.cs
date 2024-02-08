@@ -51,11 +51,13 @@ public static class QueryExtensions
     ///     Applies filtering by id of provided query.
     /// </summary>
     /// <param name="query">The source query.</param>
+    /// <param name="invertIds"></param>
     /// <param name="ids">An id of the desired entity.</param>
     /// <typeparam name="TEntity">Type of the entity.</typeparam>
     /// <typeparam name="TPrimaryKey">A type of entity's primary key.</typeparam>
     /// <returns>A new query with applied filter by id.</returns>
     public static IQueryable<TEntity> FilterById<TEntity, TPrimaryKey>(this IQueryable<TEntity> query,
+        bool invertIds,
         params TPrimaryKey[] ids)
         where TEntity : IEntity<TPrimaryKey>
         where TPrimaryKey : IEquatable<TPrimaryKey>
@@ -73,7 +75,7 @@ public static class QueryExtensions
                 return query.Where(expr);
             }
             default:
-                return query.Where(x => ids.Contains(x.Id));
+                return invertIds ? query.Where(x => !ids.Contains(x.Id)) : query.Where(x => ids.Contains(x.Id));
         }
     }
 

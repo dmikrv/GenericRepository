@@ -34,6 +34,8 @@ public class QueryParams<TPrimaryKey> : IQueryParams<TPrimaryKey>
     public string? Typeahead { get; set; }
 
     public TPrimaryKey[]? Ids { get; set; }
+
+    public bool? InvertIds { get; set; }
 }
 
 public class QueryParams<TPrimaryKey, TFilter> : QueryParams<TPrimaryKey>, IQueryParams<TPrimaryKey, TFilter>
