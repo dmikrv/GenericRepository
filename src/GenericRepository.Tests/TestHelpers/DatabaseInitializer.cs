@@ -31,6 +31,7 @@ public static class DatabaseInitializer
                             FirstName = "Chester",
                             LastName = "Koelpin"
                         },
+                        IsDeleted = true,
                         Managers = new()
                         {
                             new()
@@ -540,6 +541,7 @@ public static class DatabaseInitializer
                     new()
                     {
                         Name = "Apple R&D",
+                        IsDeleted = true,
                         HeadOfDepartment = new()
                         {
                             FirstName = "David",

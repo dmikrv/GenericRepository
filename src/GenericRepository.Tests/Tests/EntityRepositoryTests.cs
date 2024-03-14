@@ -1,5 +1,6 @@
 using FluentAssertions;
 using GenericRepository.Core.Exceptions;
+using GenericRepository.Tests.BLL.Contracts.Models.Department;
 using GenericRepository.Tests.BLL.Contracts.Repositories;
 using GenericRepository.Tests.TestHelpers;
 using Microsoft.Extensions.DependencyInjection;
@@ -120,6 +121,24 @@ public class EntityRepositoryTests
 
         // Assert
         await act.Should().ThrowAsync<NotFoundDomainException>();
+    }
+    
+    [Test]
+    public async Task GetAsync_DeletedFilter_ReturnsDeletedEntities()
+    {
+        // Arrange
+        var sp = _serviceCollection.BuildServiceProvider();
+        var repository = sp.GetRequiredService<IDepartmentRepository>();
+
+        // Act
+        var all = await repository.GetAsync(new DepartmentQueryParams{PageSize = int.MaxValue});
+        var deleted = await repository.GetAsync(new DepartmentQueryParams{PageSize = int.MaxValue, IsDeleted = true});
+        var notDeleted = await repository.GetAsync(new DepartmentQueryParams{PageSize = int.MaxValue, IsDeleted = false});
+
+        // Assert
+        all.ItemsCount.Should().Be(9);
+        deleted.ItemsCount.Should().Be(2);
+        notDeleted.ItemsCount.Should().Be(7);
     }
 
     // ----------------------------- Helper methods -----------------------------

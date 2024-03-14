@@ -9,6 +9,7 @@ public class QueryParams<TPrimaryKey> : IQueryParams<TPrimaryKey>
     private int _pageNumber = IPagedQueryParams.DefaultPageNumber;
     private int _pageSize = IPagedQueryParams.DefaultPageSize;
 
+    // PAGINATION
     public int PageNumber
     {
         get => _pageNumber;
@@ -25,10 +26,12 @@ public class QueryParams<TPrimaryKey> : IQueryParams<TPrimaryKey>
             : value;
     }
 
+    // SORTING
     public string? SortBy { get; set; }
 
     public SortingDirection? SortDirection { get; set; }
-
+    
+    // FILTERING
     public string? Search { get; set; }
 
     public string? Typeahead { get; set; }
@@ -36,6 +39,8 @@ public class QueryParams<TPrimaryKey> : IQueryParams<TPrimaryKey>
     public TPrimaryKey[]? Ids { get; set; }
 
     public bool? IsInvertIds { get; set; }
+    
+    public bool? IsDeleted { get; set; }
 }
 
 public class QueryParams<TPrimaryKey, TFilter> : QueryParams<TPrimaryKey>, IQueryParams<TPrimaryKey, TFilter>

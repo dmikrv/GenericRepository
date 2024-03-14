@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using GenericRepository.Core.Common;
+using GenericRepository.Core.Common.Auditable.SoftDelete;
 using GenericRepository.Core.Contracts.QueryParams;
 using GenericRepository.Core.Contracts.Repositories;
 using GenericRepository.Core.Models.Repositories;
@@ -259,6 +260,9 @@ public class UnitOfWorkEntityRepositoryBase<TEntity, TPrimaryKey, TContext, TAut
         if (request?.Ids is not null && request.Ids.Length > 0)
             query = await ApplyFilterByIdAsync(query, request.IsInvertIds, request.Ids);
 
+        if (request?.IsDeleted is not null)
+            query = await ApplyFilterByDeletedAsync(query, request.IsDeleted.Value);
+
         return query;
     }
 
@@ -276,6 +280,18 @@ public class UnitOfWorkEntityRepositoryBase<TEntity, TPrimaryKey, TContext, TAut
         ArgumentNullException.ThrowIfNull(query);
 
         return new ValueTask<IQueryable<TEntity>>(query.FilterById(isInvertIds ?? false, ids));
+    }
+    
+    protected virtual ValueTask<IQueryable<TEntity>> ApplyFilterByDeletedAsync(IQueryable<TEntity> query, bool isDeleted)
+    {
+        if (!typeof(IAuditableIsDeleted).IsAssignableFrom(typeof(TEntity))) 
+            return new ValueTask<IQueryable<TEntity>>(query);
+        
+        var filteredQuery = query.OfType<IAuditableIsDeleted>()
+            .AsQueryable()
+            .FilterByDeleted(isDeleted)
+            .Cast<TEntity>(); // Cast back to TEntity
+        return new ValueTask<IQueryable<TEntity>>(filteredQuery);
     }
 
     /// <summary>

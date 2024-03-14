@@ -1,6 +1,7 @@
 ﻿namespace GenericRepository.Core.Contracts.QueryParams;
 
-public interface IQueryParams : IPagedQueryParams, ISortedQueryParams, ISearchFilterQueryParams, ITypeaheadFilterQueryParams;
+public interface IQueryParams : IPagedQueryParams, ISortedQueryParams, ISearchFilterQueryParams, ITypeaheadFilterQueryParams,
+    IDeletedFilterQueryParams;
 
 public interface IQueryParams<TPrimaryKey> : IQueryParams, IIdsFilterQueryParams<TPrimaryKey>
     where TPrimaryKey : IEquatable<TPrimaryKey>;

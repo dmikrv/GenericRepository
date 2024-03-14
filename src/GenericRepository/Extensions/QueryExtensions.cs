@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using GenericRepository.Core.Common;
+using GenericRepository.Core.Common.Auditable.SoftDelete;
 using GenericRepository.Core.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -77,6 +78,14 @@ public static class QueryExtensions
             default:
                 return invertIds ? query.Where(x => !ids.Contains(x.Id)) : query.Where(x => ids.Contains(x.Id));
         }
+    }
+    
+    public static IQueryable<TEntity> FilterByDeleted<TEntity>(this IQueryable<TEntity> query, bool isDeleted)
+        where TEntity : IAuditableIsDeleted
+    {
+        return isDeleted
+            ? query.Where(x => x.IsDeleted)
+            : query.Where(x => !x.IsDeleted);
     }
 
     /// <summary>
