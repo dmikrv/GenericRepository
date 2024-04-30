@@ -1,4 +1,5 @@
 using GenericRepository.Contracts;
+using GenericRepository.Core.Common;
 using GenericRepository.Core.Common.Auditable.Create;
 using GenericRepository.Core.Common.Auditable.SoftDelete;
 using GenericRepository.Core.Common.Auditable.Update;
@@ -45,6 +46,11 @@ public class EntityAuditService : IEntityAuditService
                 deletedEntity.IsDeleted = true;
 
                 if (entry.Entity is IAuditableDeletedAt autoAuditDeletedAt) autoAuditDeletedAt.DeletedAtUtc = DateTimeNow;
+            }
+
+            if (entry is { State: EntityState.Modified, Entity: IVersioned versionedEntity })
+            {
+                entry.OriginalValues[nameof(IVersioned.RowVersion)] = versionedEntity.RowVersion;
             }
         }
 
