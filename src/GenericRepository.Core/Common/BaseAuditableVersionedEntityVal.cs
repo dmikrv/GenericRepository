@@ -3,10 +3,10 @@ using GenericRepository.Core.Common.Auditable.Update;
 
 namespace GenericRepository.Core.Common;
 
-public abstract class BaseAuditableEntityVal<TPrimaryKey> : BaseAuditableEntityVal<TPrimaryKey, TPrimaryKey>
+public abstract class BaseAuditableVersionedEntityVal<TPrimaryKey> : BaseAuditableVersionedEntityVal<TPrimaryKey, TPrimaryKey>
     where TPrimaryKey : struct, IEquatable<TPrimaryKey>;
 
-public abstract class BaseAuditableEntityVal<TPrimaryKey, TUserPrimaryKey> : BaseEntity<TPrimaryKey>,
+public abstract class BaseAuditableVersionedEntityVal<TPrimaryKey, TUserPrimaryKey> : BaseVersionedEntity<TPrimaryKey>,
     IAuditableCreated<TUserPrimaryKey>, IAuditableModifiedAt, IAuditableModifiedByVal<TUserPrimaryKey>
     where TPrimaryKey : IEquatable<TPrimaryKey>
     where TUserPrimaryKey : struct

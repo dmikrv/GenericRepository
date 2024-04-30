@@ -327,7 +327,7 @@ public abstract class UnitOfWorkRepositoryBase<TEntity, TContext, TQueryParams, 
             var existingOwnedPropertyNavigation = existingEntry?.Navigation(childOwnedProperty.Name); // TODO: slow
 
             var childEntities = childOwnedPropertyNavigation.GetCollectionOfEntities();
-            var existingChildEntities = existingOwnedPropertyNavigation?.GetCollectionOfEntities() ?? Array.Empty<object>();
+            var existingChildEntities = existingOwnedPropertyNavigation?.GetCollectionOfEntities() ?? [];
 
             // adding and modifying
             if (childEntities.Any())
@@ -383,8 +383,8 @@ public abstract class UnitOfWorkRepositoryBase<TEntity, TContext, TQueryParams, 
             }
 
             var type = existingOwnedPropertyNavigation.CurrentValue.GetType();
-            var clearMethod = type.GetMethod(nameof(ICollection<object>.Clear)) ?? throw new Exception("No found clear method");
-            var addMethod = type.GetMethod(nameof(ICollection<object>.Add)) ?? throw new Exception("No found add method");
+            var clearMethod = type.GetMethod(nameof(ICollection<object>.Clear)) ?? throw new("No found clear method");
+            var addMethod = type.GetMethod(nameof(ICollection<object>.Add)) ?? throw new("No found add method");
 
             clearMethod.Invoke(existingOwnedPropertyNavigation.CurrentValue, null);
             foreach (var modifiedEntity in modifiedEntities)
@@ -430,7 +430,7 @@ public abstract class UnitOfWorkRepositoryBase<TEntity, TContext, TQueryParams, 
                                                   $"  CreateMap<{typeof(TEntity).Name}, {typeof(T).Name}>();\n" +
                                                   $"2. Override {nameof(HandleProjectionAsync)} method and handle this error manually.");
 
-        return new ValueTask<IQueryable<T>>(query.ProjectTo<T>(Mapper.ConfigurationProvider));
+        return new(query.ProjectTo<T>(Mapper.ConfigurationProvider));
     }
 
     /// <summary>
@@ -521,7 +521,7 @@ public abstract class UnitOfWorkRepositoryBase<TEntity, TContext, TQueryParams, 
             throw new ArgumentNullException(nameof(query));
 
         if (string.IsNullOrEmpty(request?.Typeahead))
-            return new ValueTask<IQueryable<T>>(query);
+            return new(query);
 
         if (typeaheadPredicate == null)
             throw ExceptionFactory.NotImplemented("Typeahead is not supported.");
@@ -530,7 +530,7 @@ public abstract class UnitOfWorkRepositoryBase<TEntity, TContext, TQueryParams, 
 
         query = query.Where(expr);
 
-        return new ValueTask<IQueryable<T>>(query);
+        return new(query);
     }
 
     /// <summary>
@@ -552,7 +552,7 @@ public abstract class UnitOfWorkRepositoryBase<TEntity, TContext, TQueryParams, 
             throw new ArgumentNullException(nameof(query));
 
         if (string.IsNullOrEmpty(request?.Search))
-            return new ValueTask<IQueryable<T>>(query);
+            return new(query);
 
         var queryRequestQuery = request.Search;
         var searchTokens = SearchInputTokenizer.TokenizeSearch(queryRequestQuery);
@@ -561,14 +561,14 @@ public abstract class UnitOfWorkRepositoryBase<TEntity, TContext, TQueryParams, 
             throw ExceptionFactory.NotImplemented("Searching is not supported.");
 
         if (!searchTokens.Any())
-            return new ValueTask<IQueryable<T>>(query);
+            return new(query);
 
         var expr = searchPredicate.Invoke(searchTokens[0]);
         expr = searchTokens.Skip(1).Aggregate(expr, (accum, searchToken) => accum.AndAlso(searchPredicate.Invoke(searchToken)));
 
         query = query.Where(expr);
 
-        return new ValueTask<IQueryable<T>>(query);
+        return new(query);
     }
 
     /// <summary>
@@ -583,12 +583,12 @@ public abstract class UnitOfWorkRepositoryBase<TEntity, TContext, TQueryParams, 
         SortingDirection sortingDirection)
     {
         if (string.IsNullOrWhiteSpace(orderBy))
-            return new ValueTask<IQueryable<T>>(query);
+            return new(query);
 
         if (sortingDirection == SortingDirection.Desc)
             orderBy += " DESC";
 
-        return new ValueTask<IQueryable<T>>(DynamicQueryableExtensions.OrderBy(query, orderBy));
+        return new(DynamicQueryableExtensions.OrderBy(query, orderBy));
     }
 
     /// <summary>
@@ -655,7 +655,7 @@ public abstract class UnitOfWorkRepositoryBase<TEntity, TContext, TQueryParams, 
 
         query = query.OptionalOrderBy(sortingSelector, sortingDirection.Value);
 
-        return new ValueTask<IQueryable<T>>(query);
+        return new(query);
     }
 
     /// <summary>
