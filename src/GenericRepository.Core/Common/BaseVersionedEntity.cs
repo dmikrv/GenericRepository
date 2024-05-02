@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace GenericRepository.Core.Common;
 
-public abstract class BaseVersionedEntity<TPrimaryKey> : BaseEntity<TPrimaryKey>, IVersioned
+public abstract class BaseVersionedEntity<TPrimaryKey> : BaseEntity<TPrimaryKey>, IVersionedEntity
     where TPrimaryKey : IEquatable<TPrimaryKey>
 {
     [JsonIgnore] [Timestamp] public virtual byte[] RowVersion { get; set; } = null!;

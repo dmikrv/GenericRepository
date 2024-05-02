@@ -48,9 +48,9 @@ public class EntityAuditService : IEntityAuditService
                 if (entry.Entity is IAuditableDeletedAt autoAuditDeletedAt) autoAuditDeletedAt.DeletedAtUtc = DateTimeNow;
             }
 
-            if (entry is { State: EntityState.Modified, Entity: IVersioned versionedEntity })
+            if (entry is { State: EntityState.Modified, Entity: IVersionedEntity versionedEntity })
             {
-                entry.OriginalValues[nameof(IVersioned.RowVersion)] = versionedEntity.RowVersion;
+                entry.OriginalValues[nameof(IVersionedEntity.RowVersion)] = versionedEntity.RowVersion;
             }
         }
 
