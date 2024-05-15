@@ -13,6 +13,10 @@ public abstract class BaseVersionedEntity<TPrimaryKey> : BaseEntity<TPrimaryKey>
     public string Etag
     {
         get => Convert.ToBase64String(RowVersion);
-        set => RowVersion = Convert.FromBase64String(value);
+        set
+        {
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            if (value != null) RowVersion = Convert.FromBase64String(value);
+        }
     }
 }
