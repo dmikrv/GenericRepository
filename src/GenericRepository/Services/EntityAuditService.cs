@@ -1,8 +1,9 @@
 using GenericRepository.Contracts;
-using GenericRepository.Core.Common;
+using GenericRepository.Core.Common.Auditable;
 using GenericRepository.Core.Common.Auditable.Create;
 using GenericRepository.Core.Common.Auditable.SoftDelete;
 using GenericRepository.Core.Common.Auditable.Update;
+using GenericRepository.Core.Common.Auditable.Versioned;
 using Microsoft.EntityFrameworkCore;
 
 namespace GenericRepository.Services;
@@ -22,7 +23,11 @@ public class EntityAuditService : IEntityAuditService
     }
 
     /// <inheritdoc />
-    public Task ApplySharedAuditRules<TUserPrimaryKey>(DbContext context, TUserPrimaryKey userId, CancellationToken token = default)
+    public Task ApplySharedAuditRules<TUserPrimaryKey>(
+        DbContext context,
+        TUserPrimaryKey userId,
+        Guid? tenantId,
+        CancellationToken token = default)
     {
         foreach (var entry in context.ChangeTracker.Entries()
                      .Where(x => x.State is EntityState.Modified or EntityState.Added or EntityState.Deleted))
@@ -34,6 +39,9 @@ public class EntityAuditService : IEntityAuditService
 
                 if (entry.Entity is IAuditableCreatedBy<TUserPrimaryKey> autoAuditCreatedBy)
                     autoAuditCreatedBy.CreatedByUserId = userId;
+
+                if (tenantId is not null && entry.Entity is ITenant tenantEntity)
+                    tenantEntity.TenantId = tenantId.Value;
             }
 
             if (entry.Entity is IAuditableModifiedAt autoAuditUpdatedAt &&
@@ -49,18 +57,20 @@ public class EntityAuditService : IEntityAuditService
             }
 
             if (entry is { State: EntityState.Modified, Entity: IVersionedEntity versionedEntity })
-            {
                 entry.OriginalValues[nameof(IVersionedEntity.RowVersion)] = versionedEntity.RowVersion;
-            }
         }
 
         return Task.CompletedTask;
     }
 
-    public Task ApplyAuditRulesByRef<TUserPrimaryKey>(DbContext context, TUserPrimaryKey userId, CancellationToken token = default)
+    public Task ApplyAuditRulesByRef<TUserPrimaryKey>(
+        DbContext context,
+        TUserPrimaryKey userId,
+        Guid? tenantId,
+        CancellationToken token = default)
         where TUserPrimaryKey : class
     {
-        ApplySharedAuditRules(context, userId, token);
+        ApplySharedAuditRules(context, userId, tenantId, token);
 
         foreach (var entry in context.ChangeTracker.Entries()
                      .Where(x => x.State is EntityState.Modified or EntityState.Added))
@@ -82,10 +92,14 @@ public class EntityAuditService : IEntityAuditService
         return Task.CompletedTask;
     }
 
-    public Task ApplyAuditRulesByVal<TUserPrimaryKey>(DbContext context, TUserPrimaryKey userId, CancellationToken token = default)
+    public Task ApplyAuditRulesByVal<TUserPrimaryKey>(
+        DbContext context,
+        TUserPrimaryKey userId,
+        Guid? tenantId,
+        CancellationToken token = default)
         where TUserPrimaryKey : struct
     {
-        ApplySharedAuditRules(context, userId, token);
+        ApplySharedAuditRules(context, userId, tenantId, token);
 
         foreach (var entry in context.ChangeTracker.Entries()
                      .Where(x => x.State is EntityState.Modified or EntityState.Added))

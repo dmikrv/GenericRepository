@@ -10,14 +10,14 @@ public static class ServiceProviderExceptionFactoryExtensions
         ServiceLifetime lifetime = ServiceLifetime.Transient)
         where TImplementation : class, IRepositoryExceptionFactory
     {
-        services.Add(new ServiceDescriptor(typeof(IRepositoryExceptionFactory), typeof(TImplementation), lifetime));
+        services.Add(new(typeof(IRepositoryExceptionFactory), typeof(TImplementation), lifetime));
         return services;
     }
 
     public static IServiceCollection AddRepositoryExceptionFactory(this IServiceCollection services,
         ServiceLifetime lifetime = ServiceLifetime.Transient)
     {
-        services.Add(new ServiceDescriptor(typeof(IRepositoryExceptionFactory), typeof(RepositoryExceptionFactoryBase), lifetime));
+        services.Add(new(typeof(IRepositoryExceptionFactory), typeof(RepositoryExceptionFactoryBase), lifetime));
         return services;
     }
 }

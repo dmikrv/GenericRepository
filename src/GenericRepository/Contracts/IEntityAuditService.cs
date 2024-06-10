@@ -17,11 +17,16 @@ public interface IEntityAuditService
     /// </summary>
     /// <param name="context">The context with tracked entities.</param>
     /// <param name="userId">A user who performs this operation.</param>
+    /// <param name="tenantId"></param>
     /// <param name="token"></param>
-    Task ApplyAuditRulesByRef<TUserPrimaryKey>(DbContext context, TUserPrimaryKey userId, CancellationToken token = default)
+    Task ApplyAuditRulesByRef<TUserPrimaryKey>(
+        DbContext context,
+        TUserPrimaryKey userId,
+        Guid? tenantId,
+        CancellationToken token = default)
         where TUserPrimaryKey : class
     {
-        return ApplySharedAuditRules(context, userId, token);
+        return ApplySharedAuditRules(context, userId, tenantId, token);
     }
 
     /// <summary>
@@ -29,14 +34,23 @@ public interface IEntityAuditService
     /// </summary>
     /// <param name="context">The context with tracked entities.</param>
     /// <param name="userId">A user who performs this operation.</param>
+    /// <param name="tenantId"></param>
     /// <param name="token"></param>
-    Task ApplyAuditRulesByVal<TUserPrimaryKey>(DbContext context, TUserPrimaryKey userId, CancellationToken token = default)
+    Task ApplyAuditRulesByVal<TUserPrimaryKey>(
+        DbContext context,
+        TUserPrimaryKey userId,
+        Guid? tenantId,
+        CancellationToken token = default)
         where TUserPrimaryKey : struct
     {
-        return ApplySharedAuditRules(context, userId, token);
+        return ApplySharedAuditRules(context, userId, tenantId, token);
     }
 
-    protected Task ApplySharedAuditRules<TUserPrimaryKey>(DbContext context, TUserPrimaryKey userId, CancellationToken token = default)
+    protected Task ApplySharedAuditRules<TUserPrimaryKey>(
+        DbContext context,
+        TUserPrimaryKey userId,
+        Guid? tenantId,
+        CancellationToken token = default)
     {
         return Task.CompletedTask;
     }

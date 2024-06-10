@@ -160,7 +160,7 @@ public class UnitOfWorkEntityRepositoryBase<TEntity, TPrimaryKey, TContext, TAut
         var idProperty = Context.Entry(entityEntry).Property(x => x.Id);
         var valueAccessor = new ValueAccessor<TPrimaryKey>(() => idProperty.CurrentValue);
 
-        return new CreateEntityResult<TEntity, TPrimaryKey>(entityEntry, valueAccessor);
+        return new(entityEntry, valueAccessor);
     }
 
     /// <inheritdoc />
@@ -279,19 +279,19 @@ public class UnitOfWorkEntityRepositoryBase<TEntity, TPrimaryKey, TContext, TAut
     {
         ArgumentNullException.ThrowIfNull(query);
 
-        return new ValueTask<IQueryable<TEntity>>(query.FilterById(isInvertIds ?? false, ids));
+        return new(query.FilterById(isInvertIds ?? false, ids));
     }
-    
+
     protected virtual ValueTask<IQueryable<TEntity>> ApplyFilterByDeletedAsync(IQueryable<TEntity> query, bool isDeleted)
     {
-        if (!typeof(IAuditableIsDeleted).IsAssignableFrom(typeof(TEntity))) 
-            return new ValueTask<IQueryable<TEntity>>(query);
-        
+        if (!typeof(IAuditableIsDeleted).IsAssignableFrom(typeof(TEntity)))
+            return new(query);
+
         var filteredQuery = query.OfType<IAuditableIsDeleted>()
             .AsQueryable()
             .FilterByDeleted(isDeleted)
             .Cast<TEntity>(); // Cast back to TEntity
-        return new ValueTask<IQueryable<TEntity>>(filteredQuery);
+        return new(filteredQuery);
     }
 
     /// <summary>

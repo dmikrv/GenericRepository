@@ -1,4 +1,5 @@
 ﻿using GenericRepository.Core.Common;
+using GenericRepository.Core.Common.Auditable;
 using GenericRepository.Core.Common.Auditable.Create;
 using GenericRepository.Core.Common.Auditable.SoftDelete;
 using GenericRepository.Core.Common.Auditable.Update;
@@ -77,6 +78,16 @@ public static class DbContextExtensions
             {
                 var property = entityType.FindProperty(nameof(IAuditableCreatedAt.CreatedAtUtc));
                 property?.SetDefaultValueSql(defaultDateSql);
+            }
+    }
+    
+    public static void SetNotModifiedTenantIdColumn(this ModelBuilder modelBuilder)
+    {
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            if (typeof(ITenant).IsAssignableFrom(entityType.ClrType))
+            {
+                var property = entityType.FindProperty(nameof(ITenant.TenantId));
+                property?.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             }
     }
 

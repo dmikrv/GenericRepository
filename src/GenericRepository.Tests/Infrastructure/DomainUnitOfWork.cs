@@ -10,8 +10,9 @@ public class TestsUnitOfWork : GenericRepositoryUnitOfWorkVal<TestsDbContext, in
     public TestsUnitOfWork(
         TestsDbContext context,
         ICurrentUserIdProvider currentUserIdProvider,
+        ITenantIdProvider tenantIdProvider,
         IEnumerable<IEntityAuditService> entityAuditServices)
-        : base(context, currentUserIdProvider, entityAuditServices)
+        : base(context, currentUserIdProvider, tenantIdProvider, entityAuditServices)
     {
     }
 }

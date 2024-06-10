@@ -2,6 +2,7 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using GenericRepository.Core.Common;
+using GenericRepository.Core.Common.Auditable;
 using GenericRepository.Core.Contracts;
 using GenericRepository.Core.Contracts.QueryParams;
 using GenericRepository.Core.Contracts.Repositories;
@@ -44,7 +45,7 @@ public abstract class UnitOfWorkRepositoryBase<TEntity, TContext, TQueryParams, 
     {
         Context = context ?? throw new ArgumentNullException(nameof(context));
 
-        (Mapper, LoggerFactory, ExceptionFactory) = dependencies;
+        (Mapper, LoggerFactory, TenantIdProvider, ExceptionFactory) = dependencies;
         Logger = dependencies.LoggerFactory.CreateLogger(GetType());
 
         Set = context.Set<TEntity>();
@@ -79,6 +80,9 @@ public abstract class UnitOfWorkRepositoryBase<TEntity, TContext, TQueryParams, 
     ///     Gets the exception factory.
     /// </summary>
     protected virtual IRepositoryExceptionFactory ExceptionFactory { get; }
+
+    protected virtual ITenantIdProvider? TenantIdProvider { get; }
+
 
     /// <summary>
     ///     Gets a key properties of <typeparamref name="TEntity" />.
@@ -754,7 +758,25 @@ public abstract class UnitOfWorkRepositoryBase<TEntity, TContext, TQueryParams, 
         if (options?.AccessRightsPolicyParams is not null)
             query = await ApplyAccessRightsPolicy(query, options.AccessRightsPolicyParams, token);
 
+        query = await ApplyFilterByTenantIdAsync(query, token);
+
         return query;
+    }
+
+    protected virtual async ValueTask<IQueryable<TEntity>> ApplyFilterByTenantIdAsync(
+        IQueryable<TEntity> query,
+        CancellationToken token = default)
+    {
+        if (TenantIdProvider is null || !typeof(ITenant).IsAssignableFrom(typeof(TEntity)))
+            return query;
+
+        var tenantId = await TenantIdProvider.GetTenantIdAsync(token);
+
+        var filteredQuery = query.OfType<ITenant>()
+            .AsQueryable()
+            .Where(x => x.TenantId == tenantId)
+            .Cast<TEntity>(); // Cast back to TEntity
+        return filteredQuery;
     }
 
     /// <summary>

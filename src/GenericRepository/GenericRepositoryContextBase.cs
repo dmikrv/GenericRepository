@@ -20,5 +20,6 @@ public abstract class GenericRepositoryContextBase<TContext>(DbContextOptions<TC
         modelBuilder.DefaultValueForAutoAuditDates(DefaultDateSql);
         modelBuilder.DefaultValueForAutoAuditUserIds();
         modelBuilder.NullableValueForAutoAuditUserIds();
+        modelBuilder.SetNotModifiedTenantIdColumn();
     }
 }
