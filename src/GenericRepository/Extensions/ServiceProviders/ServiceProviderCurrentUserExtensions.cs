@@ -15,7 +15,7 @@ public static class ServiceProviderCurrentUserExtensions
 
     public static IServiceCollection AddRepositoryTenantProviderService<TImplementation>(this IServiceCollection services,
         ServiceLifetime lifetime = ServiceLifetime.Scoped)
-        where TImplementation : class, ICurrentUserIdProvider
+        where TImplementation : class, ITenantIdProvider
     {
         services.Add(new(typeof(ITenantIdProvider), typeof(TImplementation), lifetime));
         return services;
