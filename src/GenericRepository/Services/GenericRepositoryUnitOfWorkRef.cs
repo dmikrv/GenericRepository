@@ -18,8 +18,8 @@ public class GenericRepositoryUnitOfWorkRef<TContext, TUserPrimaryKey> : Generic
     public GenericRepositoryUnitOfWorkRef(
         TContext context,
         ICurrentUserIdProvider currentUserIdProvider,
-        ITenantIdProvider? tenantIdProvider,
-        IEnumerable<IEntityAuditService> entityAuditServices) : base(context, currentUserIdProvider, tenantIdProvider, entityAuditServices)
+        IEnumerable<IEntityAuditService> entityAuditServices,
+        ITenantIdProvider? tenantIdProvider = null) : base(context, currentUserIdProvider, entityAuditServices, tenantIdProvider)
     {
     }
 

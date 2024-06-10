@@ -45,7 +45,7 @@ public abstract class UnitOfWorkRepositoryBase<TEntity, TContext, TQueryParams, 
     {
         Context = context ?? throw new ArgumentNullException(nameof(context));
 
-        (Mapper, LoggerFactory, TenantIdProvider, ExceptionFactory) = dependencies;
+        (Mapper, LoggerFactory, ExceptionFactory, TenantIdProvider) = dependencies;
         Logger = dependencies.LoggerFactory.CreateLogger(GetType());
 
         Set = context.Set<TEntity>();

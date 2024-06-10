@@ -22,8 +22,8 @@ public class GenericRepositoryUnitOfWork<TContext> : IUnitOfWork where TContext 
     public GenericRepositoryUnitOfWork(
         TContext context,
         ICurrentUserIdProvider currentUserIdProvider,
-        ITenantIdProvider? tenantIdProvider,
-        IEnumerable<IEntityAuditService> entityAuditServices)
+        IEnumerable<IEntityAuditService> entityAuditServices,
+        ITenantIdProvider? tenantIdProvider = null)
     {
         Context = context;
         CurrentUserIdProvider = currentUserIdProvider;

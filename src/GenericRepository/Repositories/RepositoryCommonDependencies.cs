@@ -13,5 +13,5 @@ namespace GenericRepository.Repositories;
 public record RepositoryCommonDependencies(
     IMapper Mapper,
     ILoggerFactory LoggerFactory,
-    ITenantIdProvider? TenantIdProvider,
-    IRepositoryExceptionFactory ExceptionFactory);
+    IRepositoryExceptionFactory ExceptionFactory,
+    ITenantIdProvider? TenantIdProvider = null);
