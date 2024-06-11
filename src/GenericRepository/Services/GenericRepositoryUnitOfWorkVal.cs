@@ -19,7 +19,7 @@ public class GenericRepositoryUnitOfWorkVal<TContext, TUserPrimaryKey> : Generic
         TContext context,
         ICurrentUserIdProvider currentUserIdProvider,
         IEnumerable<IEntityAuditService> entityAuditServices,
-        ITenantIdProvider? tenantIdProvider = null) : base(context, currentUserIdProvider, entityAuditServices, tenantIdProvider)
+        ITenantIdProvider? tenantIdProvider) : base(context, currentUserIdProvider, entityAuditServices, tenantIdProvider)
     {
     }
 

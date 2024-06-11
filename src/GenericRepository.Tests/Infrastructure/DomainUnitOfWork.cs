@@ -11,7 +11,7 @@ public class TestsUnitOfWork : GenericRepositoryUnitOfWorkVal<TestsDbContext, in
         TestsDbContext context,
         ICurrentUserIdProvider currentUserIdProvider,
         IEnumerable<IEntityAuditService> entityAuditServices,
-        ITenantIdProvider? tenantIdProvider = null)
+        ITenantIdProvider? tenantIdProvider)
         : base(context, currentUserIdProvider, entityAuditServices, tenantIdProvider)
     {
     }

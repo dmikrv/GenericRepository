@@ -14,4 +14,4 @@ public record RepositoryCommonDependencies(
     IMapper Mapper,
     ILoggerFactory LoggerFactory,
     IRepositoryExceptionFactory ExceptionFactory,
-    ITenantIdProvider? TenantIdProvider = null);
+    ITenantIdProvider? TenantIdProvider);
