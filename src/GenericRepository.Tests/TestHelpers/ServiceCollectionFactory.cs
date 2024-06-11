@@ -36,12 +36,20 @@ public static class ServiceCollectionFactory
         services.AddLogging();
 
         var iCurrentUserServiceMock = new Mock<ICurrentUserIdProvider>();
+        var iTenantProviderServiceMock = new Mock<ITenantIdProvider>();
 
         iCurrentUserServiceMock.Setup(x => x.GetCurrentUserIdAsync<int>(It.IsAny<CancellationToken>()))
             .ReturnsAsync(456);
-
+        
         services.AddSingleton(iCurrentUserServiceMock.Object);
         services.AddSingleton(iCurrentUserServiceMock);
+        
+        
+        iTenantProviderServiceMock.Setup(x => x.GetTenantIdAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Guid.NewGuid());
+        
+        services.AddSingleton(iTenantProviderServiceMock.Object);
+        services.AddSingleton(iTenantProviderServiceMock);
 
         // Mapper
         services.AddSingleton<IMapper>(new Mapper(new MapperConfiguration(_ => { }))); // TODO
