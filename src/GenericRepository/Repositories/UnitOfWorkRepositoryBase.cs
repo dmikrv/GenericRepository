@@ -14,6 +14,7 @@ using GenericRepository.Helpers;
 using GenericRepository.OwnedPropertiesTree;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using DynamicQueryableExtensions = System.Linq.Dynamic.Core.DynamicQueryableExtensions;
 
@@ -339,7 +340,10 @@ public abstract class UnitOfWorkRepositoryBase<TEntity, TContext, TQueryParams, 
                 var existingChildEntitiesPrimaryKeys = existingChildEntities
                     .ToDictionary(k => GetPrimaryKey(k.GetType(), k), v => v, new CollectionOfEntitiesEqualityComparer()); // TODO: slow
 
-                var childOwnedPropertyForeignKey = ((RuntimeNavigation)childOwnedPropertyNavigation.Metadata).ForeignKey;
+                var childOwnedPropertyForeignKey = childOwnedPropertyNavigation is RuntimeSkipNavigation
+                    ? (RuntimeForeignKey)((IReadOnlySkipNavigation)childOwnedPropertyNavigation.Metadata).ForeignKey!
+                    : ((RuntimeNavigation)childOwnedPropertyNavigation.Metadata).ForeignKey;
+                
                 var foreignKeyPropertyNames = childOwnedPropertyForeignKey.Properties.Select(x => x.Name);
                 var foreignPrincipalKeyPropertyNames = childOwnedPropertyForeignKey.PrincipalKey.Properties.Select(x => x.Name);
                 var foreignKeysPropertyNames = foreignKeyPropertyNames.Zip(foreignPrincipalKeyPropertyNames).ToArray();
