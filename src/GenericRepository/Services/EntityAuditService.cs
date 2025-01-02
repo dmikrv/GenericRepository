@@ -83,7 +83,7 @@ public class EntityAuditService : IEntityAuditService
             if (entry is
                 {
                     State: EntityState.Modified,
-                    Entity: IAuditableIsDeleted,
+                    Entity: IAuditableIsDeleted { IsDeleted: true },
                     Entity: IAuditableDeletedByRef<TUserPrimaryKey> autoAuditDeletedBy
                 })
                 autoAuditDeletedBy.DeletedByUserId = userId;
@@ -112,7 +112,7 @@ public class EntityAuditService : IEntityAuditService
             if (entry is
                 {
                     State: EntityState.Modified,
-                    Entity: IAuditableIsDeleted,
+                    Entity: IAuditableIsDeleted { IsDeleted: true },
                     Entity: IAuditableDeletedByVal<TUserPrimaryKey> autoAuditDeletedBy
                 })
                 autoAuditDeletedBy.DeletedByUserId = userId;
