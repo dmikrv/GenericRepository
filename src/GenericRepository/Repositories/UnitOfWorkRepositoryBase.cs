@@ -425,7 +425,7 @@ public abstract class UnitOfWorkRepositoryBase<TEntity, TContext, TQueryParams, 
         return Task.FromResult(query);
     }
 
-    protected ValueTask<IQueryable<T>> HandleProjectionAsync<T>(IQueryable<TEntity> query)
+    protected virtual ValueTask<IQueryable<T>> HandleProjectionAsync<T>(IQueryable<TEntity> query)
     {
         if (!Mapper.IsMappingExists<TEntity, T>())
             throw ExceptionFactory.NotImplemented($"Projections are not available for repository {GetType().Name}.\n" +
